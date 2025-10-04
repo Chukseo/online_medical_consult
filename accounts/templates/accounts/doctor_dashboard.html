@@ -1,0 +1,38 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h3 class="mb-3">Doctor dashboard</h3>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-3">
+        <div class="card-header">Incoming consultations</div>
+        <ul class="list-group list-group-flush">
+          {% for c in request.user.assigned_consultations.all %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ c.patient.display_name|default:c.patient.username }}</strong>
+              <div class="text-muted">Status: {{ c.get_status_display }} • Created: {{ c.created_at }}</div>
+            </div>
+            {% if c.room_id %}
+              <a class="btn btn-primary" href="{% url 'join_room' c.room_id %}">Join room</a>
+            {% else %}
+              <span class="badge bg-secondary">Awaiting payment</span>
+            {% endif %}
+          </li>
+          {% empty %}<li class="list-group-item">No consultations yet.</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">Profile</div>
+        <div class="card-body">
+          <p><strong>Name:</strong> {{ request.user.display_name }}</p>
+          <p><strong>Specialization:</strong> {{ request.user.specialization }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

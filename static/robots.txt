@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://joyvor.org/sitemap.xml

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-5 fw-bold">Talk to a doctor in minutes</h1>
+        <p class="lead">Private, secure video consultations. Pay with Stripe or Paystack and connect instantly.</p>
+        <div class="d-flex gap-2">
+          <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get started</a>
+          <a href="#how" class="btn btn-outline-secondary btn-lg">How it works</a>
+        </div>
+        <div class="mt-3">
+          <img src="/static/img/trust-badges.png" alt="Secure payments and privacy" class="img-fluid" />
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="glass p-4 shadow">
+          <h5 class="mb-3">Chat with a doctor</h5>
+          <form class="d-flex gap-2">
+            <input type="text" class="form-control" placeholder="Describe your issue..." />
+            <button class="btn btn-success" type="button">Start chat</button>
+          </form>
+          <small class="text-muted d-block mt-2">No sign-up needed to start the chat.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="how" class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="p-4 border rounded h-100">
+          <h5>Choose a doctor</h5>
+          <p>Browse specializations and availability.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 border rounded h-100">
+          <h5>Pay securely</h5>
+          <p>Pay with Stripe or Paystack. Your session unlocks instantly.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 border rounded h-100">
+          <h5>Connect on video</h5>
+          <p>Peer-to-peer video with encrypted signaling.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

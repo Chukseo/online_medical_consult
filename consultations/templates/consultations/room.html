@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-3">Consultation Room</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <video id="localVideo" autoplay playsinline muted class="w-100 rounded shadow"></video>
+    </div>
+    <div class="col-md-6">
+      <video id="remoteVideo" autoplay playsinline class="w-100 rounded shadow"></video>
+    </div>
+  </div>
+  <div class="mt-3 d-flex gap-2">
+    <button id="startBtn" class="btn btn-primary">Start</button>
+    <button id="muteBtn" class="btn btn-outline-secondary">Mute</button>
+    <button id="endBtn" class="btn btn-danger">End</button>
+  </div>
+</div>
+
+<script>
+const roomId = "{{ room_id }}";
+const role = "{{ role }}";
+const ws = new WebSocket(`wss://${window.location.host}/ws/consult/${roomId}/`);
+
+let pc = new RTCPeerConnection({ iceServers: [
+  { urls: "stun:stun.l.google.com:19302" }
+]});
+let localStream;
+
+ws.onmessage = async (e) => {
+  const msg = JSON.parse(e.data);
+  if (msg.type === "offer" && role === "doctor") {
+    await pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    ws.send(JSON.stringify({ type: "answer", data: answer, sender: role }));
+  } else if (msg.type === "answer" && role === "patient") {
+    await pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+  } else if (msg.type === "candidate") {
+    try { await pc.addIceCandidate(msg.data); } catch(err) { console.error(err); }
+  }
+};
+
+pc.ontrack = (e) => {
+  document.getElementById("remoteVideo").srcObject = e.streams[0];
+};
+
+pc.onicecandidate = (e) => {
+  if (e.candidate) ws.send(JSON.stringify({ type: "candidate", data: e.candidate, sender: role }));
+};
+
+document.getElementById("startBtn").onclick = async () => {
+  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  document.getElementById("localVideo").srcObject = localStream;
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  if (role === "patient") {
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    ws.send(JSON.stringify({ type: "offer", data: offer, sender: role }));
+  }
+};
+
+document.getElementById("muteBtn").onclick = () => {
+  localStream.getAudioTracks().forEach(t => t.enabled = !t.enabled);
+};
+
+document.getElementById("endBtn").onclick = () => {
+  pc.close();
+  ws.close();
+  window.location.href = "{% url 'patient_dashboard' %}";
+};
+</script>
+{% endblock %}

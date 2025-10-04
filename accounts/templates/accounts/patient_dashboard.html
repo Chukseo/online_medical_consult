@@ -1,0 +1,23 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h3 class="mb-3">Your consultations</h3>
+  <a class="btn btn-success mb-3" href="{% url 'create_consultation' 1 %}">Consult General Practitioner</a>
+  <ul class="list-group">
+    {% for c in request.user.consultations.all %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>Doctor:</strong> {{ c.doctor.display_name|default:c.doctor.username }}
+        <div class="text-muted">Status: {{ c.get_status_display }}</div>
+      </div>
+      {% if c.room_id %}
+      <a class="btn btn-primary" href="{% url 'join_room' c.room_id %}">Join room</a>
+      {% else %}
+      <a class="btn btn-outline-primary" href="{% url 'choose_payment' c.id %}">Pay now</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
