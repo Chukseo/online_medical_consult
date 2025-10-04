@@ -11,6 +11,7 @@ A web-based platform enabling seamless video consultations between patients and 
 - **Notifications:** Email and in-app reminders for appointments.
 - **Doctor & Patient Dashboards:** Personalized interfaces for both roles.
 - **Prescription Management:** Generate and share digital prescriptions.
+- **Secure Online and instant Payment
 
 ## Technologies Used
 
